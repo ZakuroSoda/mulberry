@@ -1,10 +1,10 @@
-DOMAIN = "https://www.mulberry.com/" #For production deployment
+DOMAIN = "https://www.mulberry.com/url/" #For production deployment
 
 #Import Dependencies
 #In this project, I chose to use a sqlite database to store the (url-shortened) pairs
 import sqlite3
 #Flask is used as the web framework
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request
 #String and Random are used to generate the short if the user fails to supply it
 import string
 import random
@@ -22,6 +22,8 @@ def index():
 @app.route("/run",methods = ['POST', 'GET'])
 def shorten():
     #Checks for the right method
+    if request.method == 'GET':
+        return render_template("error.html", error="NO DATA GIVEN. Please access this page only by clicking the button on our home page.")
     if request.method == 'POST':
 
         #avoids fatal error on user not supplying the url
@@ -62,6 +64,18 @@ def shorten():
             return render_template("error.html", error="Sorry, shortlink already exists in our database, please choose another!")
 
 # TO IMPLEMENT: The actual return_redirect when a user uses a short url, also the url checking is pretty shit...
+# this should work https://riptutorial.com/flask/example/19420/catch-all-route
+
+@app.route('/url', defaults={'u_path': ''})
+@app.route('/url/<path:u_path>')
+def catch_all(u_path):
+    pointer = u_path.replace("/","")
+    db = sqlite3.connect('db/urls.db')
+    cursor = db.cursor()
+    cursor.execute(f"SELECT original FROM urls WHERE shorterned='{pointer}'")
+    originalURL = cursor.fetchall()[0][0].strip()
+    
+    return redirect(originalURL)
 
 # Run app for debug
 app.run(host="0.0.0.0")
