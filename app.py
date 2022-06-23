@@ -78,4 +78,4 @@ def catch_all(u_path):
     return redirect(originalURL)
 
 # Run app for debug
-app.run(host="0.0.0.0")
+app.run(host="0.0.0.0",port=80)
