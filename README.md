@@ -5,3 +5,4 @@ Things to Implement:
 - Will Implement Analytics 
 - Increase Cybersecurity (Extremely vulnerable to SQLi and Auth Skip now)
 - Restrictions on click count, like a self-destroying url only available once
+- Tidy up the CSS and HTML
