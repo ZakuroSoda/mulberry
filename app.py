@@ -5,6 +5,7 @@ DOMAIN = "/url/" #For production deployment
 import sqlite3
 #General OS Import
 import os
+import click
 #Flask is used as the web framework
 from flask import Flask, redirect, render_template, request, make_response, send_from_directory
 #String and Random are used to generate the short if the user fails to supply it
@@ -63,9 +64,9 @@ def shorten():
         cursor = db.cursor()
 
         #avoid duplicate short links (it works now, i fixed it, yay I guess [Do not touch it])
-        cursor.execute(f"SELECT shorterned FROM urls WHERE shorterned='{custom}'")
+        cursor.execute(f"SELECT shortened FROM urls WHERE shortened='{custom}'")
         if str(cursor.fetchall()) == "[]":
-            cursor.execute(f"INSERT INTO urls (original, shorterned) VALUES ('{url}','{custom}')")
+            cursor.execute(f"INSERT INTO urls (original, shortened, clicks) VALUES ('{url}','{custom}',0)")
             db.commit()
             return render_template("result.html", shortlink= (DOMAIN + str(custom) + "/") )
         else:
@@ -76,12 +77,18 @@ def shorten():
 @app.route('/url', defaults={'u_path': ''})
 @app.route('/url/<path:u_path>')
 def catch_all(u_path):
-    #Our shorterned link
+    #Our shortened link
     pointer = u_path.replace("/","")
     db = sqlite3.connect('db/urls.db')
     cursor = db.cursor()
+    #Increment Clicks
+    cursor.execute(f"SELECT clicks FROM urls WHERE shortened='{pointer}'")
+    clicksOriginal = int(cursor.fetchall()[0][0])
+    clicksNew = clicksOriginal + 1
+    cursor.execute(f"UPDATE urls SET clicks={clicksNew} WHERE shortened='{pointer}'")
+    db.commit()    
     #Get the original
-    cursor.execute(f"SELECT original FROM urls WHERE shorterned='{pointer}'")
+    cursor.execute(f"SELECT original FROM urls WHERE shortened='{pointer}'")
     #Strip the carriage return
     originalURL = cursor.fetchall()[0][0].strip()
     #Redirect to the original url
