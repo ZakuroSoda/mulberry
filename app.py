@@ -1,21 +1,30 @@
-DOMAIN = "https://www.mulberry.com/url/" #For production deployment
+DOMAIN = "/url/" #For production deployment
 
 #Import Dependencies
 #In this project, I chose to use a sqlite database to store the (url-shortened) pairs
 import sqlite3
+#General OS Import
+import os
 #Flask is used as the web framework
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, make_response, send_from_directory
 #String and Random are used to generate the short if the user fails to supply it
 import string
 import random
 
+
 #Create the app
 app = Flask(__name__)
+
+#Favicon
+@app.route('/favicon.ico')
+def favicon():
+    #StackOverflow
+    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
 #Home
 @app.route("/")
 def index():
-    #Essentially returns the index.html file as a template. Nothing special.
+    #Essentially returns the index.html file as a template.
     return render_template("index.html")
 
 #Shortener
@@ -29,7 +38,7 @@ def shorten():
         #avoids fatal error on user not supplying the url
         try:
             url = request.form['url'].split("\n")[0]
-            if "http" not in url:
+            if "http" not in url or "://" not in url:
                 raise Exception("")
         except:
             return render_template("error.html", error="URL NOT GIVEN")
@@ -63,19 +72,59 @@ def shorten():
             print(cursor.fetchall())
             return render_template("error.html", error="Sorry, shortlink already exists in our database, please choose another!")
 
-# TO IMPLEMENT: The actual return_redirect when a user uses a short url, also the url checking is pretty shit...
-# this should work https://riptutorial.com/flask/example/19420/catch-all-route
-
+#When the user requests a short link
 @app.route('/url', defaults={'u_path': ''})
 @app.route('/url/<path:u_path>')
 def catch_all(u_path):
+    #Our shorterned link
     pointer = u_path.replace("/","")
     db = sqlite3.connect('db/urls.db')
     cursor = db.cursor()
+    #Get the original
     cursor.execute(f"SELECT original FROM urls WHERE shorterned='{pointer}'")
+    #Strip the carriage return
     originalURL = cursor.fetchall()[0][0].strip()
-    
+    #Redirect to the original url
     return redirect(originalURL)
+
+#admin login
+@app.route('/admin',methods = ['POST', 'GET'])
+def admin():
+    #Standard Login
+    if request.method == "GET":
+        return render_template("admin.html")
+    #Shitty Authentication
+    elif request.method == "POST":
+        if request.form['email'] == "admin@admin.com" and request.form['password'] == "admin123":
+            resp = make_response(redirect("/portal"))
+            #more bad auth
+            resp.set_cookie('auth', "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9")
+            return resp
+        else:
+            return render_template("error.html", error="Wrong Credentials") 
+
+#admin portal 
+@app.route("/portal",methods=["GET","POST"])
+def portal():
+    if request.method == "GET":
+        #Shitty auth
+        if request.cookies.get('auth') == "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9":
+            return render_template("portal.html")
+        else:
+            return render_template("error.html",error="403 Forbidden"), 403
+    #Execute admin commands
+    if request.method == "POST":
+        statement = request.form["command"]
+        db = sqlite3.connect('db/urls.db')
+        cursor = db.cursor()
+        try:
+            cursor.execute(statement)
+            db.commit()
+            results = str(cursor.fetchall())
+        except sqlite3.OperationalError as error:
+            return render_template("error.html",error=error)
+        return render_template("message.html", message="Success!", message2=results)
 
 # Run app for debug
 app.run(host="0.0.0.0",port=80)
+# I love port 80!

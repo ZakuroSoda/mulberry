@@ -24,16 +24,20 @@
             font-family: 'Major Mono Display', monospace;
             font-family: 'Roboto Mono', monospace;
         }
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 12px 20px;
-            box-sizing: border-box;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            background-color: #f8f8f8;
+        .css-input {
+            padding: 10px;
             font-size: 16px;
-            resize: none;
+            border-width: 2px;
+            border-color: #CCCCCC;
+            background-color: #FFFFFF;
+            color: #000000;
+            border-style: inset;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(66,66,66,.75);
+            text-shadow: 0px 0px 5px rgba(66,66,66,.75);
+        }
+        .css-input:focus {
+            outline:none;
         }
         .myButton {
             box-shadow: 0px 0px 0px 2px #3dc21b;
@@ -58,13 +62,30 @@
             position:relative;
             top:1px;
         }
+        input[type=submit] {
+			color: #ffffff;
+			background-color: #1c5e5f;
+			font-size: 16px;
+			border: 1px solid #1c5e5f;
+			border-radius: 10px;
+			padding: 10px 20px;
+			cursor: pointer
+		}
+		input[type=submit]:hover {
+			color: #1c5e5f;
+			background-color: #ffffff;
+		}
     </style>
 </head>
 <body>
     <div class="center">
         <div class="centercenter">
             <h2>The 🍇Mulberry🍇 URL Shorterner!</h2>
-            <h3> {{ error }} </h3>
+            <h3> ADMIN PORTAL </h3>
+            <form action="" method="post">
+                <label for="command">Command: </label><input type="text" name="command" class="css-input"> <br><br>
+                <div class="centercenter"><input type="submit" value="Run!"></div>
+            </form>
         </div>
         
     </div>
