@@ -1,4 +1,3 @@
-DOMAIN = "/url/" #For production deployment
 
 #Import Dependencies
 #In this project, I chose to use a sqlite database to store the (url-shortened) pairs
@@ -11,6 +10,18 @@ from flask import Flask, redirect, render_template, request, make_response, send
 #String and Random are used to generate the short if the user fails to supply it
 import string
 import random
+
+def findlocalip():
+    from os import popen
+    config = popen("ipconfig").read().split("\n")
+    for i in range(0,len(config)):
+        if config[i] == "Wireless LAN adapter WiFi:":
+            index = i+4
+            break
+    localip = config[index].split(":")[-1].replace(" ","")
+    return localip
+
+DOMAIN = findlocalip() + "/url/" #For production deployment
 
 
 #Create the app
