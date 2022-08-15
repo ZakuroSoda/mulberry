@@ -49,7 +49,7 @@ def shorten():
 
         #avoids fatal error on user not supplying the url
         try:
-            url = request.form['url'].split("\n")[0]
+            url = request.form['url']
             if "http" not in url or "://" not in url:
                 raise Exception("")
         except:
@@ -57,7 +57,9 @@ def shorten():
 
         #avoids fatal error on user not supplying the url and generates the string for him
         try:
-            custom = request.form['url'].split("\n")[1]
+            custom = request.form['custom']
+            if custom == "":
+                raise Exception("")
             #remove the user's pesky spaces and stupid newlines
             custom = custom.replace(" ", "-")
             custom = custom.strip()
