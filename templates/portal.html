@@ -9,21 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Itim&family=Major+Mono+Display&family=Roboto+Mono&display=swap" rel="stylesheet">
-    <style>
-        .center {
-            margin: 0;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-        }
-        .centercenter{
-            text-align: center;
-            font-family: 'Itim', cursive;
-            font-family: 'Major Mono Display', monospace;
-            font-family: 'Roboto Mono', monospace;
-        }
+    <link type="text/css" rel="stylesheet" href="/static/styles.css"/>
+   <style>
         .css-input {
             padding: 10px;
             font-size: 16px;
@@ -38,30 +25,7 @@
         }
         .css-input:focus {
             outline:none;
-        }
-        .myButton {
-            box-shadow: 0px 0px 0px 2px #3dc21b;
-            background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
-            background-color:#44c767;
-            border-radius:10px;
-            /* border:1px solid #18ab29; */
-            display:inline-block;
-            cursor:pointer;
-            color:#ffffff;
-            font-family:Arial;
-            font-size:19px;
-            /* padding:12px 37px; */
-            text-decoration:none;
-            text-shadow:0px 1px 0px #2f6627;
-        }
-        .myButton:hover {
-            background:linear-gradient(to bottom, #5cbf2a 5%, #44c767 100%);
-            background-color:#5cbf2a;
-        }
-        .myButton:active {
-            position:relative;
-            top:1px;
-        }
+        }        
         input[type=submit] {
 			color: #ffffff;
 			background-color: #1c5e5f;
@@ -84,7 +48,7 @@
             <h3> ADMIN PORTAL </h3>
             <h5> WITH GREAT POWER COMES GREAT RESPONSIBILITY. ALWAYS TEST YOUR SQL COMMANDS BEFORE RUNNING THEM ON PRODUCTION DATABASES ESPECIALLY WITH DROP, UPDATE and TRUNCATE. THIS ADMIN CONSOLE HAS FULL ADMIN RIGHTS ON THE DATABASE.</h5>
             <form action="" method="post">
-                <label for="command">Command: </label><input type="text" name="command" class="css-input"> <br><br>
+                <input type="text" name="command" placeholder="command" class="css-input"> <br><br>
                 <div class="centercenter"><input type="submit" value="Run!"></div>
             </form>
         </div>
